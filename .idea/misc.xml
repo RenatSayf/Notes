@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Development_for_Android/Projects/notes-test-assignment-android/app/src/main/res/layout/fragment_note_details.xml" value="0.34782608695652173" />
+        <entry key="..\:/Development_for_Android/Projects/notes-test-assignment-android/app/src/main/res/layout/fragment_note_list.xml" value="0.34782608695652173" />
+        <entry key="..\:/Development_for_Android/Projects/notes-test-assignment-android/app/src/main/res/layout/list_item_note.xml" value="0.2246376811594203" />
+        <entry key="..\:/Development_for_Android/Projects/notes-test-assignment-android/app/src/main/res/menu/details_screen_menu.xml" value="0.35520833333333335" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.16394927536231885" />
         <entry key="app/src/main/res/layout/fragment_note_details.xml" value="0.16394927536231885" />
         <entry key="app/src/main/res/layout/fragment_note_list.xml" value="0.375" />

@@ -3,6 +3,7 @@ package com.notes.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 import java.time.LocalDateTime
 
 @Entity(tableName = "notes")
@@ -18,4 +19,4 @@ data class NoteDbo(
     val createdAt: LocalDateTime,
     @ColumnInfo(name = "modifiedAt")
     val modifiedAt: LocalDateTime,
-)
+): Serializable

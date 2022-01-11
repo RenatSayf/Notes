@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.notes.data.NoteDatabase
+import com.notes.ui.list.NoteListViewModel
 import dagger.*
 import javax.inject.Singleton
 

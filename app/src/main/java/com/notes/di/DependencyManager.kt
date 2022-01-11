@@ -2,6 +2,7 @@ package com.notes.di
 
 import android.app.Application
 
+
 class DependencyManager private constructor(
     application: Application
 ) {
@@ -15,6 +16,7 @@ class DependencyManager private constructor(
 
         fun noteListViewModel() = instance.rootComponent.getNoteListViewModel()
 
+        fun detailsViewModel() = instance.rootComponent.getDetailsViewModel()
     }
 
     private val appComponent = DaggerAppComponent.factory().create(application)

@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Notes</string>
+    <string name="text_note_has_been_updated">The note has been updated</string>
+    <string name="text_note_has_been_created">The note has been created</string>
+    <string name="text_note_has_been_removed">The note has been deleted</string>
+    <string name="created_date">Created Date:</string>
+    <string name="date_of_change">Date of change:</string>
+    <string name="header">Header</string>
+    <string name="note">Note</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
 </resources>
