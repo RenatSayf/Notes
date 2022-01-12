@@ -3,10 +3,8 @@ package com.notes.ui.list
 import android.os.Bundle
 import android.view.*
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar.*
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.notes.R
@@ -16,7 +14,7 @@ import com.notes.di.DependencyManager
 import com.notes.ui.RootActivity
 import com.notes.ui._base.ViewBindingFragment
 import com.notes.ui.details.NoteDetailsFragment
-import javax.inject.Inject
+
 
 class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     FragmentNoteListBinding::inflate
