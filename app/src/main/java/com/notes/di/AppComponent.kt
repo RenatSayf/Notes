@@ -9,11 +9,7 @@ import dagger.*
 import javax.inject.Singleton
 
 @Singleton
-@Component(
-    modules = [
-        AppModule::class,
-    ]
-)
+@Component(modules = [ AppModule::class,])
 interface AppComponent {
 
     @Component.Factory
@@ -27,11 +23,7 @@ interface AppComponent {
 
 }
 
-@Module(
-    includes = [
-        AppModule.Binding::class
-    ]
-)
+@Module(includes = [AppModule.Binding::class])
 class AppModule {
 
     @Provides
@@ -50,5 +42,6 @@ class AppModule {
         fun bindContext(application: Application): Context
 
     }
+
 
 }

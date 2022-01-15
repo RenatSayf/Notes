@@ -4,15 +4,19 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.ViewModelProvider
 import com.notes.R
 import com.notes.data.NoteDbo
 import com.notes.databinding.FragmentNoteDetailsBinding
 import com.notes.di.DependencyManager
+import com.notes.di.ViewModelFactory
 import com.notes.ui.RootActivity
 import com.notes.ui._base.ViewBindingFragment
 import com.notes.ui.list.NoteListFragment
+import com.notes.ui.list.NoteListViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
     FragmentNoteDetailsBinding::inflate
@@ -23,7 +27,17 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
         const val TITLE_KEY = "title_key"
     }
 
-    private val viewModel by lazy { DependencyManager.detailsViewModel() }
+//    @Inject
+//    lateinit var factory: ViewModelFactory
+
+    private val viewModel by lazy {
+        //ViewModelProvider(this, factory)[NoteListViewModel::class.java]
+        DependencyManager.noteListViewModel()
+    }
+
+    private val detailsVM by lazy {
+        ViewModelProvider(this)[DetailsViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +58,11 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
 
         val note = arguments?.getSerializable(NOTE_KEY) as? NoteDbo
         if (note != null) {
-            viewModel.setState(DetailsViewModel.State.Update(note))
+            detailsVM.setState(DetailsViewModel.State.Update(note))
         }
-        else viewModel.setState(DetailsViewModel.State.New)
+        else detailsVM.setState(DetailsViewModel.State.New)
 
-        viewModel.state.observe(viewLifecycleOwner, { state ->
+        detailsVM.state.observe(viewLifecycleOwner, { state ->
             when(state) {
                 is DetailsViewModel.State.New -> {
                     viewBinding.createDateLayout.visibility = View.GONE

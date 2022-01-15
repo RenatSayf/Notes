@@ -72,6 +72,40 @@ class NoteListViewModel @Inject constructor(
         return res
     }
 
+    fun saveNote(note: NoteDbo, isNew: Boolean = true): LiveData<Boolean> {
+        val res = MutableLiveData(false)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (isNew) {
+                    noteDatabase.noteDao().insertAll(note)
+                    res.postValue(true)
+                }
+                else {
+                    val i = noteDatabase.noteDao().update(note)
+                    res.postValue(i > 0)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                res.postValue(false)
+            }
+        }
+        return res
+    }
+
+    fun deleteNote(note: NoteDbo): LiveData<Boolean> {
+        val res = MutableLiveData(false)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val i = noteDatabase.noteDao().delete(note.id)
+                res.postValue(i > 0)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                res.postValue(false)
+            }
+        }
+        return res
+    }
+
 }
 
 data class NoteListItem(

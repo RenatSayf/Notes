@@ -5,29 +5,40 @@ import android.view.*
 import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar.*
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.notes.R
 import com.notes.databinding.FragmentNoteListBinding
 import com.notes.databinding.ListItemNoteBinding
+import com.notes.di.AppModule
+import com.notes.di.DaggerRootComponent
 import com.notes.di.DependencyManager
+import com.notes.di.ViewModelFactory
 import com.notes.ui.RootActivity
 import com.notes.ui._base.ViewBindingFragment
 import com.notes.ui.details.NoteDetailsFragment
+import javax.inject.Inject
 
 
 class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     FragmentNoteListBinding::inflate
 ) {
 
+//    @Inject
+//    lateinit var factory: ViewModelProvider.Factory
+
     private val viewModel by lazy {
         DependencyManager.noteListViewModel()
+        //ViewModelProvider(this, factory)[NoteListViewModel::class.java]
     }
 
     private val recyclerViewAdapter = RecyclerViewAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
