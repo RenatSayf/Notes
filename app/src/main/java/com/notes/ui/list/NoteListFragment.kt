@@ -8,10 +8,10 @@ import androidx.appcompat.widget.Toolbar.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
-import com.notes.App
 import com.notes.R
 import com.notes.databinding.FragmentNoteListBinding
 import com.notes.databinding.ListItemNoteBinding
+import com.notes.di.DependencyManager
 import com.notes.di.ViewModelFactory
 import com.notes.ui.RootActivity
 import com.notes.ui._base.ViewBindingFragment
@@ -25,7 +25,9 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     @Inject
     lateinit var factory: ViewModelFactory
 
-    private lateinit var viewModel: NoteListViewModel
+    private val viewModel: NoteListViewModel by lazy {
+        ViewModelProvider(this, factory)[NoteListViewModel::class.java]
+    }
 
     private val recyclerViewAdapter = RecyclerViewAdapter()
 
@@ -45,11 +47,9 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     ) {
         super.onViewBindingCreated(viewBinding, savedInstanceState)
 
-        (requireContext().applicationContext as App).appComponent.inject(this)
+        DependencyManager.inject(this)
 
         viewBinding.toolbar.inflateMenu(R.menu.details_screen_menu)
-
-        viewModel = ViewModelProvider(this, factory)[NoteListViewModel::class.java]
 
         viewBinding.createNoteButton.setOnClickListener {
             val noteDetailsFragment = NoteDetailsFragment()
@@ -119,7 +119,6 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
         ) {
             this.items.clear()
             this.items.addAll(items)
-            //notifyDataSetChanged()
         }
 
         private inner class ViewHolder(

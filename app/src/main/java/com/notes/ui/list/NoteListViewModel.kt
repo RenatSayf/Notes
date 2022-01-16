@@ -18,6 +18,7 @@ class NoteListViewModel @Inject constructor(
 
     private val _notes = MutableLiveData<List<NoteListItem>?>()
     val notes: LiveData<List<NoteListItem>?> = _notes
+
     fun setNotes(list: List<NoteListItem>) {
         _notes.value = list
     }

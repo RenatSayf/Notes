@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.notes.data.NoteDatabase
+import com.notes.ui.details.NoteDetailsFragment
 import com.notes.ui.list.NoteListFragment
 import com.notes.ui.list.NoteListViewModel
 import dagger.*
@@ -22,6 +23,7 @@ interface AppComponent {
 
     fun getNoteDatabase(): NoteDatabase
     fun inject(fragment: NoteListFragment)
+    fun inject(fragment: NoteDetailsFragment)
 
 }
 

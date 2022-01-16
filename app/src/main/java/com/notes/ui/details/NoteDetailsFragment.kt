@@ -27,12 +27,11 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
         const val TITLE_KEY = "title_key"
     }
 
-//    @Inject
-//    lateinit var factory: ViewModelFactory
+    @Inject
+    lateinit var factory: ViewModelFactory
 
     private val viewModel by lazy {
-        //ViewModelProvider(this, factory)[NoteListViewModel::class.java]
-        DependencyManager.noteListViewModel()
+        ViewModelProvider(this, factory)[NoteListViewModel::class.java]
     }
 
     private val detailsVM by lazy {
@@ -41,6 +40,8 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        DependencyManager.inject(this)
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
