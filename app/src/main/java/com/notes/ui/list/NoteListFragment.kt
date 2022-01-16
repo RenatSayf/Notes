@@ -34,6 +34,8 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        DependencyManager.inject(this)
+
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 (requireActivity() as RootActivity).finish()
@@ -46,8 +48,6 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
         savedInstanceState: Bundle?
     ) {
         super.onViewBindingCreated(viewBinding, savedInstanceState)
-
-        DependencyManager.inject(this)
 
         viewBinding.toolbar.inflateMenu(R.menu.details_screen_menu)
 
