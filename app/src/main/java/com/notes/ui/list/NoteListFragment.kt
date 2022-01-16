@@ -8,12 +8,10 @@ import androidx.appcompat.widget.Toolbar.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.notes.App
 import com.notes.R
 import com.notes.databinding.FragmentNoteListBinding
 import com.notes.databinding.ListItemNoteBinding
-import com.notes.di.AppModule
-import com.notes.di.DaggerRootComponent
-import com.notes.di.DependencyManager
 import com.notes.di.ViewModelFactory
 import com.notes.ui.RootActivity
 import com.notes.ui._base.ViewBindingFragment
@@ -24,21 +22,15 @@ import javax.inject.Inject
 class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     FragmentNoteListBinding::inflate
 ) {
+    @Inject
+    lateinit var factory: ViewModelFactory
 
-//    @Inject
-//    lateinit var factory: ViewModelProvider.Factory
-
-    private val viewModel by lazy {
-        DependencyManager.noteListViewModel()
-        //ViewModelProvider(this, factory)[NoteListViewModel::class.java]
-    }
+    private lateinit var viewModel: NoteListViewModel
 
     private val recyclerViewAdapter = RecyclerViewAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -53,15 +45,12 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     ) {
         super.onViewBindingCreated(viewBinding, savedInstanceState)
 
+        (requireContext().applicationContext as App).appComponent.inject(this)
+
         viewBinding.toolbar.inflateMenu(R.menu.details_screen_menu)
 
-        viewBinding.list.adapter = recyclerViewAdapter
-        viewBinding.list.addItemDecoration(
-            DividerItemDecoration(
-                requireContext(),
-                LinearLayout.VERTICAL
-            )
-        )
+        viewModel = ViewModelProvider(this, factory)[NoteListViewModel::class.java]
+
         viewBinding.createNoteButton.setOnClickListener {
             val noteDetailsFragment = NoteDetailsFragment()
             (requireActivity() as RootActivity).navigateTo(noteDetailsFragment.apply {
@@ -74,13 +63,9 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
         viewModel.notes.observe(viewLifecycleOwner, {
                 if (it != null) {
                     recyclerViewAdapter.setItems(it)
+                    viewBinding.list.adapter = recyclerViewAdapter
+                    viewBinding.list.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
                 }
-            }
-        )
-        viewModel.navigateToNoteCreation.observe(
-            viewLifecycleOwner,
-            {
-
             }
         )
 
@@ -88,15 +73,15 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
             when(it.itemId) {
                 R.id.sort_by_modified_date_asc -> {
                     viewModel.getSortedNotes(true).observe(viewLifecycleOwner, { list ->
-                        list?.let {
-                            viewModel.setNotes(it)
+                        list?.let { notes ->
+                            viewModel.setNotes(notes)
                         }
                     })
                 }
                 R.id.sort_by_modified_date_desc -> {
                     viewModel.getSortedNotes(false).observe(viewLifecycleOwner, { list ->
-                        list?.let {
-                            viewModel.setNotes(it)
+                        list?.let { notes ->
+                            viewModel.setNotes(notes)
                         }
                     })
                 }
@@ -134,7 +119,7 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
         ) {
             this.items.clear()
             this.items.addAll(items)
-            notifyDataSetChanged()
+            //notifyDataSetChanged()
         }
 
         private inner class ViewHolder(

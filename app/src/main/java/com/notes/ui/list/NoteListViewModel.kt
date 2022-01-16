@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 
 class NoteListViewModel @Inject constructor(
-    private val noteDatabase: NoteDatabase
+    private var noteDatabase: NoteDatabase
 ) : ViewModel() {
 
     private val _notes = MutableLiveData<List<NoteListItem>?>()

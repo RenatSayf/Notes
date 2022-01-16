@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.notes.data.NoteDatabase
+import com.notes.ui.list.NoteListFragment
 import com.notes.ui.list.NoteListViewModel
 import dagger.*
 import javax.inject.Singleton
@@ -20,6 +21,7 @@ interface AppComponent {
     }
 
     fun getNoteDatabase(): NoteDatabase
+    fun inject(fragment: NoteListFragment)
 
 }
 
@@ -27,6 +29,7 @@ interface AppComponent {
 class AppModule {
 
     @Provides
+    @Singleton
     fun provideNoteDatabase(
         context: Context
     ) = Room.databaseBuilder(
@@ -41,6 +44,12 @@ class AppModule {
         @Binds
         fun bindContext(application: Application): Context
 
+    }
+
+    @Singleton
+    @Provides
+    fun provideViewModelFactory(db: NoteDatabase): ViewModelFactory {
+        return ViewModelFactory(db)
     }
 
 

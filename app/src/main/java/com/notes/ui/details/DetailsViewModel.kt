@@ -18,4 +18,8 @@ class DetailsViewModel : ViewModel() {
         _state.value = state
     }
 
+    init {
+        println("*****************************XXXXXXXXXXXXXXXXXXXXXXXXX*******************************************")
+    }
+
 }
