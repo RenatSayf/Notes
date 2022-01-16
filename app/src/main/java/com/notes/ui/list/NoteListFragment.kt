@@ -3,7 +3,6 @@ package com.notes.ui.list
 import android.os.Bundle
 import android.view.*
 import android.widget.LinearLayout
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -35,12 +34,6 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
         super.onCreate(savedInstanceState)
 
         DependencyManager.inject(this)
-
-        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                (requireActivity() as RootActivity).finish()
-            }
-        })
     }
 
     override fun onViewBindingCreated(

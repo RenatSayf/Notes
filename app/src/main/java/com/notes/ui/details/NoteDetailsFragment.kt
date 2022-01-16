@@ -3,7 +3,6 @@ package com.notes.ui.details
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import com.notes.R
 import com.notes.data.NoteDbo
@@ -42,19 +41,13 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
         super.onCreate(savedInstanceState)
 
         DependencyManager.inject(this)
-
-        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                (requireActivity() as RootActivity).navigateTo(NoteListFragment())
-            }
-        })
     }
 
     override fun onViewBindingCreated(viewBinding: FragmentNoteDetailsBinding, savedInstanceState: Bundle?) {
         super.onViewBindingCreated(viewBinding, savedInstanceState)
 
         viewBinding.toolbar.setNavigationOnClickListener {
-            (requireActivity() as RootActivity).navigateTo(NoteListFragment())
+            (requireActivity() as RootActivity).onBackPressed()
         }
 
         val note = arguments?.getSerializable(NOTE_KEY) as? NoteDbo
