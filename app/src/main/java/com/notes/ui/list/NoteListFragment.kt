@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     FragmentNoteListBinding::inflate
-) {
+)  {
     @Inject
     lateinit var factory: ViewModelFactory
 
@@ -44,11 +44,23 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
 
         viewBinding.toolbar.inflateMenu(R.menu.details_screen_menu)
 
+        if (savedInstanceState == null) {
+            viewModel.getNotes()
+        }
+
+        viewBinding.list.adapter = recyclerViewAdapter
+        viewBinding.list.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                LinearLayout.VERTICAL
+            )
+        )
+
         viewBinding.createNoteButton.setOnClickListener {
             val noteDetailsFragment = NoteDetailsFragment()
             (requireActivity() as RootActivity).navigateTo(noteDetailsFragment.apply {
                 this.arguments = Bundle().apply {
-                    putString(NoteDetailsFragment.TITLE_KEY, "New note")
+                    putString(NoteDetailsFragment.TITLE_KEY, this@NoteListFragment.getString(R.string.new_note))
                 }
             })
         }
@@ -56,8 +68,7 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
         viewModel.notes.observe(viewLifecycleOwner, {
                 if (it != null) {
                     recyclerViewAdapter.setItems(it)
-                    viewBinding.list.adapter = recyclerViewAdapter
-                    viewBinding.list.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
+
                 }
             }
         )
@@ -112,6 +123,7 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
         ) {
             this.items.clear()
             this.items.addAll(items)
+            notifyDataSetChanged()
         }
 
         private inner class ViewHolder(
@@ -126,7 +138,7 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
                 binding.titleLabel.text = note.title
                 binding.contentLabel.text = note.content
 
-                binding.noteLayout.setOnClickListener {
+                binding.root.setOnClickListener {
 
                     viewModel.getNote(note.id).observe(this@NoteListFragment, { dbo ->
                         dbo?.let {

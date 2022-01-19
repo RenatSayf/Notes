@@ -11,8 +11,6 @@ import com.notes.di.DependencyManager
 import com.notes.di.ViewModelFactory
 import com.notes.ui.RootActivity
 import com.notes.ui._base.ViewBindingFragment
-import com.notes.ui.list.NoteListFragment
-import com.notes.ui.list.NoteListViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -29,12 +27,8 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
     @Inject
     lateinit var factory: ViewModelFactory
 
-    private val viewModel by lazy {
-        ViewModelProvider(this, factory)[NoteListViewModel::class.java]
-    }
-
     private val detailsVM by lazy {
-        ViewModelProvider(this)[DetailsViewModel::class.java]
+        ViewModelProvider(this, factory)[DetailsViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,44 +40,37 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
     override fun onViewBindingCreated(viewBinding: FragmentNoteDetailsBinding, savedInstanceState: Bundle?) {
         super.onViewBindingCreated(viewBinding, savedInstanceState)
 
+        viewBinding.toolbar.title = arguments?.getString(TITLE_KEY)
         viewBinding.toolbar.setNavigationOnClickListener {
             (requireActivity() as RootActivity).onBackPressed()
         }
 
         val note = arguments?.getSerializable(NOTE_KEY) as? NoteDbo
         if (note != null) {
-            detailsVM.setState(DetailsViewModel.State.Update(note))
+            viewBinding.titleEditText.setText(note.title)
+            viewBinding.contentEditText.setText(note.content)
+            viewBinding.createdDateTextView.text = note.createdAt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
+            viewBinding.modifiedDateTextView.text = note.modifiedAt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
         }
-        else detailsVM.setState(DetailsViewModel.State.New)
-
-        detailsVM.state.observe(viewLifecycleOwner, { state ->
-            when(state) {
-                is DetailsViewModel.State.New -> {
-                    viewBinding.createDateLayout.visibility = View.GONE
-                    viewBinding.modifiedDateLayout.visibility = View.GONE
-                }
-                is DetailsViewModel.State.Update -> {
-                    viewBinding.titleEditText.setText(state.note.title)
-                    viewBinding.contentEditText.setText(state.note.content)
-                    viewBinding.createdDateTextView.text = state.note.createdAt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
-                    viewBinding.modifiedDateTextView.text = state.note.modifiedAt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
-                }
-            }
-        })
-
-        viewBinding.toolbar.title = arguments?.getString(TITLE_KEY)
+        else {
+            viewBinding.createDateLayout.visibility = View.GONE
+            viewBinding.modifiedDateLayout.visibility = View.GONE
+            viewBinding.deleteButton.visibility = View.GONE
+        }
 
         viewBinding.saveButton.setOnClickListener {
             if (note != null) {
-                val newDbo = NoteDbo(
-                    id = note.id,
+                val newDbo = note.copy(
                     title = viewBinding.titleEditText.text.toString(),
                     content = viewBinding.contentEditText.text.toString(),
                     createdAt = note.createdAt,
                     modifiedAt = LocalDateTime.now()
                 )
-                viewModel.saveNote(newDbo, false).observe(viewLifecycleOwner, {
-                    if (it) Toast.makeText(requireContext(), getString(R.string.text_note_has_been_updated), Toast.LENGTH_SHORT).show()
+                detailsVM.saveNote(newDbo, false).observe(viewLifecycleOwner, {
+                    if (it) {
+                        Toast.makeText(requireContext(), getString(R.string.text_note_has_been_updated), Toast.LENGTH_SHORT).show()
+                        (requireActivity() as RootActivity).onBackPressed()
+                    }
                 })
             }
             else {
@@ -93,25 +80,26 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
                     createdAt = LocalDateTime.now(),
                     modifiedAt = LocalDateTime.now()
                 )
-                viewModel.saveNote(newDbo, true).observe(viewLifecycleOwner, {
-                    if (it) Toast.makeText(requireContext(), getString(R.string.text_note_has_been_created), Toast.LENGTH_SHORT).show()
-                    (requireActivity() as RootActivity).navigateTo(NoteListFragment())
+                detailsVM.saveNote(newDbo, true).observe(viewLifecycleOwner, {
+                    if (it) {
+                        Toast.makeText(requireContext(), getString(R.string.text_note_has_been_created), Toast.LENGTH_SHORT).show()
+                        (requireActivity() as RootActivity).onBackPressed()
+                    }
                 })
             }
         }
 
         viewBinding.deleteButton.setOnClickListener {
             note?.let { n ->
-                viewModel.deleteNote(n).observe(viewLifecycleOwner, {
+                detailsVM.deleteNote(n).observe(viewLifecycleOwner, {
                     if (it) {
                         Toast.makeText(requireContext(), getString(R.string.text_note_has_been_removed), Toast.LENGTH_SHORT).show()
-                        (requireActivity() as RootActivity).navigateTo(NoteListFragment())
+                        (requireActivity() as RootActivity).onBackPressed()
                     }
                 })
 
             }
         }
     }
-
 
 }
